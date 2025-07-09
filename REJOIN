@@ -17,7 +17,7 @@ local guiPosition = UDim2.new(0, 30, 0, 30)
 local isRunning = true
 local isMinimized = false
 local autoMoveEnabled = false
-local isClosed = false -- added
+local isClosed = false
 
 -- Load delay range
 local function loadSettings()
@@ -77,7 +77,6 @@ frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 frame.Active = true
 frame.Draggable = false
 frame.ClipsDescendants = true
-
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
 -- Title
@@ -162,6 +161,23 @@ autoMoveToggleBtn.BackgroundColor3 = autoMoveEnabled and Color3.fromRGB(0, 180, 
 autoMoveToggleBtn.TextColor3 = Color3.new(1, 1, 1)
 autoMoveToggleBtn.Font = Enum.Font.GothamBold
 autoMoveToggleBtn.TextSize = 14
+
+-- ✅ Minimize toggle logic
+local function setMinimized(minimize)
+	isMinimized = minimize
+	for _, child in pairs(frame:GetChildren()) do
+		if child:IsA("GuiObject") and child ~= minBtn and child ~= closeBtn and child ~= title then
+			child.Visible = not minimize
+		end
+	end
+	minBtn.Text = minimize and "+" or "-"
+	frame.Size = minimize and UDim2.new(0, 260, 0, 34) or UDim2.new(0, 260, 0, 190)
+end
+
+-- ⬇ Connect Minimize Button
+minBtn.MouseButton1Click:Connect(function()
+	setMinimized(not isMinimized)
+end)
 
 autoMoveToggleBtn.MouseButton1Click:Connect(function()
 	autoMoveEnabled = not autoMoveEnabled
